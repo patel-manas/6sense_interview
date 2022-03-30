@@ -1,4 +1,4 @@
-import moment from 'moment';
+import moment from "moment";
 
 const initialState = {
   loading: true,
@@ -10,7 +10,7 @@ const initialState = {
   todos: [],
 };
 
-const TOGGLE_TODO = 'todo/manage/TOGGLE_TODO';
+const TOGGLE_TODO = "todo/manage/TOGGLE_TODO";
 
 function toggleTodo(id) {
   return { type: TOGGLE_TODO, id };
@@ -33,11 +33,12 @@ function toggleTodoReducer(state = {}, action) {
   }
 }
 
-const LOAD_TODOS = 'todo/manage/LOAD_TODOS';
-const LOAD_TODOS_SUCCESS = 'todo/manage/LOAD_TODOS_SUCCESS';
-const LOAD_TODOS_FAIL = 'todo/manage/LOAD_TODOS_FAIL';
+const LOAD_TODOS = "todo/manage/LOAD_TODOS";
+const LOAD_TODOS_SUCCESS = "todo/manage/LOAD_TODOS_SUCCESS";
+const LOAD_TODOS_FAIL = "todo/manage/LOAD_TODOS_FAIL";
 
-const ADD_TODO = 'todo/manage/ADD_TODO';
+const ADD_TODO = "todo/manage/ADD_TODO";
+const DELETE_TODO = "todo/manage/DELETE_TODO";
 
 function load() {
   return { type: LOAD_TODOS };
@@ -55,22 +56,34 @@ function addTodo(todo) {
   return { type: ADD_TODO, id: Math.random(), todo };
 }
 
+function deleteTodo(id) {
+  return { type: DELETE_TODO, id };
+}
+
 function ManageReducer(state = initialState, action) {
   switch (action.type) {
     case LOAD_TODOS: {
       return {
-        ...state, loading: true, addError: false, error: false,
+        ...state,
+        loading: true,
+        addError: false,
+        error: false,
       };
     }
     case LOAD_TODOS_SUCCESS: {
       const { todos } = action;
       return {
-        ...state, loading: false, todos, loaded: true,
+        ...state,
+        loading: false,
+        todos,
+        loaded: true,
       };
     }
     case LOAD_TODOS_FAIL: {
       return {
-        ...state, error: true, loading: false,
+        ...state,
+        error: true,
+        loading: false,
       };
     }
     case ADD_TODO: {
@@ -81,7 +94,10 @@ function ManageReducer(state = initialState, action) {
         addError: false,
         todos: [
           {
-            id, name: todo, completed: false, created: moment().format('DD-MM-YYYY'),
+            id,
+            name: todo,
+            completed: false,
+            created: moment().format("DD-MM-YYYY"),
           },
           ...state.todos,
         ],
@@ -94,6 +110,17 @@ function ManageReducer(state = initialState, action) {
         todos: todos.map((todo) => toggleTodoReducer(todo, action)),
       };
     }
+
+    case DELETE_TODO: {
+      const { id: currentTodoId } = action;
+      const { todos: currentTodos = [] } = state;
+      return {
+        ...state,
+        addError: false,
+        todos: currentTodos.filter(({ id }) => id !== currentTodoId),
+      };
+    }
+
     default:
       return state;
   }
@@ -105,6 +132,7 @@ export const actions = {
   loadSuccess,
   loadFail,
   toggleTodo,
+  deleteTodo,
 };
 
 export const actionTypes = {
