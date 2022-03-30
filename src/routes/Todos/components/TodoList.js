@@ -1,43 +1,40 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { Col, Row } from 'react-flexbox-grid/lib';
-import { Spin } from 'antd';
-import { Todo } from './Todo';
+import React from "react";
+import PropTypes from "prop-types";
+import { Col, Row } from "react-flexbox-grid/lib";
+import { Spin } from "antd";
+import { Todo } from "./Todo";
 
 function TodoList(props) {
-  const { todos, toggle, loading } = props;
+  const { todos, toggle, loading, delete_todo } = props;
+
+  if (loading) {
+    return <Spin size="default" />;
+  }
 
   if (todos.length === 0) {
     return <div>There is nothing here</div>;
   }
 
-  if (loading) {
-    return (<Spin size="default" />);
-  }
-
-  console.log('Rendering todos list');
+  console.log("Rendering todos list");
 
   const renderTodos = todos.map((todo) => {
-    const {
-      name, completed, id, created,
-    } = todo;
+    const { name, completed, id, created } = todo;
     return (
       <Todo
-        key={created}
+        key={id}
         name={name}
         toggle={toggle}
         id={id}
         completed={completed}
         created={created}
+        delete_todo={delete_todo}
       />
     );
   });
 
   return (
-    <Col xs={12}>
-      <Row center="xs">
-        {renderTodos}
-      </Row>
+    <Col xs={12} center="xs">
+      {renderTodos}
     </Col>
   );
 }
